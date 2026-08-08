@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'appointments',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'interface.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, "templates/my_app"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,9 +74,13 @@ WSGI_APPLICATION = 'interface.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "medical_no_show",
+        "USER": "postgres",
+        "PASSWORD": "your_postgres_password",       # I hope I don't fuck up and push this hhh
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
