@@ -1,11 +1,9 @@
 from django.urls import path
-import sys
-sys.path.append("appointments")
-from appointments import views
+from . import views
 
 urlpatterns = [
-    path("", views.index, name="index")
-    #path("", views.index, name="index"),
+    path("", views.index, name="index"),
+    path("next", views.index_next, name="index_next"),
     #path("", views.index, name="index"),
     #path("", views.index, name="index")
 ]
