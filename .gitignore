@@ -3,3 +3,5 @@ interface/appointments/__pycache__
 interface/appointments/migrations/__pycache__
 interface/interface/__pycache__
 interface/db.sqlite3
+interface/accounts/__pycache__
+interface/accounts/migrations/__pycache__
