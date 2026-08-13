@@ -3,10 +3,10 @@ from django.contrib.auth.models import User
 
 
 class Doctor(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-
-    email = models.EmailField(unique=True)
+    user = models.OneToOneField(
+            User,
+            on_delete=models.CASCADE
+    )
 
     specialization = models.CharField(max_length=100)
 
