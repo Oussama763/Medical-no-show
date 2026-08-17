@@ -1,7 +1,7 @@
 # This is a project for managing appointments
 
 Project Structure:
-
+```
 Medical-no-show/
 ├── interface
 │   ├── accounts
@@ -50,3 +50,4 @@ Medical-no-show/
 │   └── manage.py
 ├── README.md
 └── requirements.txt
+```
