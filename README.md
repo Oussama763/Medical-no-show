@@ -40,7 +40,6 @@ Medical-no-show/
 │   │   │   └── test_relationships.py
 │   │   ├── urls.py
 │   │   └── views.py
-│   ├── db.sqlite3
 │   ├── interface
 │   │   ├── asgi.py
 │   │   ├── __init__.py
