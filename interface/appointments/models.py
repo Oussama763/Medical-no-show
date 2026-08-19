@@ -5,13 +5,14 @@ from django.contrib.auth.models import User
 class Doctor(models.Model):
     user = models.OneToOneField(
             User,
-            on_delete=models.CASCADE
+            on_delete=models.CASCADE,
+            null=True
     )
 
     specialization = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Dr. {self.first_name} {self.last_name}"
+        return f"Dr. {self.user.get_full_name()}"
 
 
 
