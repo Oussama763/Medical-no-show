@@ -16,7 +16,7 @@ def register(request):
 
             login(request, user)
 
-            return redirect("accounts:dashboard")      #insted of "dashboard"
+            return redirect("dashboard:redirect")      #insted of "dashboard"
 
     else:
 
