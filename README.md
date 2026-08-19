@@ -2,7 +2,7 @@
 
 Project Structure:
 ```
-Medical-no-show/
+.
 ├── interface
 │   ├── accounts
 │   │   ├── admin.py
@@ -31,6 +31,7 @@ Medical-no-show/
 │   │   ├── migrations
 │   │   │   ├── 0001_initial.py
 │   │   │   ├── 0002_patient_timeslot_appointment.py
+│   │   │   ├── 0003_remove_doctor_email_remove_doctor_first_name_and_more.py
 │   │   │   └── __init__.py
 │   │   ├── models.py
 │   │   ├── tests
@@ -38,6 +39,24 @@ Medical-no-show/
 │   │   │   ├── test_appointments.py
 │   │   │   ├── test_models.py
 │   │   │   └── test_relationships.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── dashboard
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── __init__.py
+│   │   ├── migrations
+│   │   │   └── __init__.py
+│   │   ├── models.py
+│   │   ├── templates
+│   │   │   └── dashboard
+│   │   │       ├── admin
+│   │   │       │   └── dashboard.html
+│   │   │       ├── doctor
+│   │   │       │   └── dashboard.html
+│   │   │       └── patient
+│   │   │           └── dashboard.html
+│   │   ├── tests.py
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── interface
@@ -49,4 +68,5 @@ Medical-no-show/
 │   └── manage.py
 ├── README.md
 └── requirements.txt
+
 ```
