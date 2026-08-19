@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'appointments',
     'accounts',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "medical_no_show",
         "USER": "postgres",
-        "PASSWORD": "YOUR_POSTGRES_PASSWORD",       # I hope I don't fuck up and push this hhh
+        "PASSWORD": "THEouzart",       # I hope I don't fuck up and push this hhh
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -123,5 +124,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 LOGIN_REDIRECT_URL = "/dashboard/"
+
+LOGIN_URL = "/accounts/login/"
 
 LOGOUT_REDIRECT_URL = "/accounts/login/"
