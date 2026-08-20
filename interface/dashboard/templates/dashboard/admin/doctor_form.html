@@ -1,0 +1,49 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Add Doctor
+{% endblock %}
+
+{% block page_title %}
+Add Doctor
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <h3 class="mb-4">
+            Create Doctor
+        </h3>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                Create Doctor
+
+            </button>
+
+            <a
+                href="{% url 'dashboard:doctor_list' %}"
+                class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

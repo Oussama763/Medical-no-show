@@ -1,1 +1,78 @@
-<h1>Administrator Dashboard</h1>
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Administrator Dashboard
+{% endblock %}
+
+{% block page_title %}
+Administrator Dashboard
+{% endblock %}
+
+{% block sidebar %}
+
+<a href="#">
+    <i class="bi bi-speedometer2"></i>
+    Dashboard
+</a>
+
+<a href="#">
+    <i class="bi bi-person-badge"></i>
+    Doctors
+</a>
+
+<a href="#">
+    <i class="bi bi-people"></i>
+    Patients
+</a>
+
+<a href="#">
+    <i class="bi bi-calendar-check"></i>
+    Appointments
+</a>
+
+<a href="#">
+    <i class="bi bi-clock-history"></i>
+    Time Slots
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-3">
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <h5>Doctors</h5>
+
+                <h2>12</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <h5>Patients</h5>
+
+                <h2>203</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

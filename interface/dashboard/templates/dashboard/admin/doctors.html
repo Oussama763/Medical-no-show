@@ -1,0 +1,70 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Doctors
+{% endblock %}
+
+{% block page_title %}
+Doctors
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Doctors</h2>
+
+<a href="{% url 'dashboard:doctor_create' %}"
+   class="btn btn-primary mb-3">
+    Add Doctor
+</a>
+
+<table class="table table-striped">
+
+    <thead>
+
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Specialization</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for doctor in doctors %}
+
+        <tr>
+
+            <td>
+                Dr.
+                {{ doctor.user.first_name }}
+                {{ doctor.user.last_name }}
+            </td>
+
+            <td>
+                {{ doctor.user.email }}
+            </td>
+
+            <td>
+                {{ doctor.specialization }}
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="3">
+                No doctors found.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
