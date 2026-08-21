@@ -1,11 +1,11 @@
 {% extends "dashboard/base.html" %}
 
 {% block title %}
-Add Doctor
+Delete Doctor
 {% endblock %}
 
 {% block page_title %}
-Add Doctor
+Delete Doctor
 {% endblock %}
 
 {% block content %}
@@ -14,21 +14,45 @@ Add Doctor
 
     <div class="card-body">
 
-        <h3 class="mb-4">
-            {{title}}
+        <h3 class="text-danger">
+
+            Delete Doctor
+
         </h3>
+
+        <hr>
+
+        <p>
+
+            Are you sure you want to delete
+
+            <strong>
+
+                Dr.
+                {{ doctor.user.first_name }}
+                {{ doctor.user.last_name }}
+
+            </strong>
+
+            ?
+
+        </p>
+
+        <p class="text-muted">
+
+            This action cannot be undone.
+
+        </p>
 
         <form method="post">
 
             {% csrf_token %}
 
-            {{ form.as_p }}
-
             <button
                 type="submit"
-                class="btn btn-primary">
+                class="btn btn-danger">
 
-                {{button_text}}
+                Delete
 
             </button>
 

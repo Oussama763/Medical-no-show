@@ -20,13 +20,12 @@ Doctors
 <table class="table table-striped">
 
     <thead>
-
         <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Specialization</th>
+            <th>Actions</th>
         </tr>
-
     </thead>
 
     <tbody>
@@ -36,9 +35,7 @@ Doctors
         <tr>
 
             <td>
-                Dr.
-                {{ doctor.user.first_name }}
-                {{ doctor.user.last_name }}
+                Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}
             </td>
 
             <td>
@@ -49,16 +46,24 @@ Doctors
                 {{ doctor.specialization }}
             </td>
 
+            <td>
+                <a href="{% url 'dashboard:doctor_update' doctor.id %}"
+                   class="btn btn-warning btn-sm">
+                    Edit
+                </a>
+
+                <a href="{% url 'dashboard:doctor_delete' doctor.id %}"
+                   class="btn btn-danger btn-sm">
+                    Delete
+                </a>
+            </td>
+
         </tr>
 
         {% empty %}
 
         <tr>
-
-            <td colspan="3">
-                No doctors found.
-            </td>
-
+            <td colspan="4">No doctors found.</td>
         </tr>
 
         {% endfor %}
