@@ -1,0 +1,140 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Time Slots
+{% endblock %}
+
+{% block page_title %}
+Time Slots
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    Time Slots
+
+</h2>
+
+<a href="{% url 'dashboard:generate_slots' %}"
+   class="btn btn-primary mb-3">
+    Generate Schedule
+</a>
+
+<table class="table table-striped">
+
+    <thead>
+
+        <tr>
+
+            <th>Doctor</th>
+
+            <th>Date</th>
+
+            <th>Start</th>
+
+            <th>End</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for slot in slots %}
+
+        <tr>
+
+            <td>
+
+                Dr.
+                {{ slot.doctor.user.first_name }}
+                {{ slot.doctor.user.last_name }}
+
+            </td>
+
+            <td>
+
+                {{ slot.date }}
+
+            </td>
+
+            <td>
+
+                {{ slot.start_time }}
+
+            </td>
+
+            <td>
+
+                {{ slot.end_time }}
+
+            </td>
+
+            <td>
+
+                {% if slot.is_available %}
+
+                    <span class="badge bg-success">
+
+                        Available
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-danger">
+
+                        Booked
+
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <a
+                    href="{% url 'dashboard:slot_update' slot.id %}"
+                    class="btn btn-warning btn-sm">
+
+                    Edit
+
+                </a>
+
+                <a
+                    href="{% url 'dashboard:slot_delete' slot.id %}"
+                    class="btn btn-danger btn-sm">
+
+                    Delete
+
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="6">
+
+                No time slots found.
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
