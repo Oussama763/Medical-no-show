@@ -6,10 +6,18 @@ class Doctor(models.Model):
     user = models.OneToOneField(
             User,
             on_delete=models.CASCADE,
-            null=True
+            null=True,
+            blank=True,
     )
 
     specialization = models.CharField(max_length=100)
+    
+
+    appointment_duration = models.PositiveIntegerField(
+        default=30,
+        help_text="Default appointment duration in minutes."
+    )
+
 
     def __str__(self):
         return f"Dr. {self.user.get_full_name()}"
@@ -58,11 +66,13 @@ class TimeSlot(models.Model):
 
     end_time = models.TimeField()
 
+    is_available = models.BooleanField(default=True)
+
     def __str__(self):
         return (
-            f"{self.doctor} "
-            f"{self.date} "
-            f"{self.start_time}"
+            f"{self.doctor}"
+            f"{self.date}"
+            f"{self.start_time}-{self.end_time}"
         )
 
 
