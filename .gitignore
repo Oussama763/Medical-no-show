@@ -6,3 +6,4 @@ interface/db.sqlite3
 interface/accounts/__pycache__
 interface/accounts/migrations/__pycache__
 interface/dashboard/__pycache__
+interface/dashboard/migrations/__pycache__
