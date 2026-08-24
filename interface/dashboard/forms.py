@@ -39,6 +39,13 @@ class DoctorUpdateForm(forms.Form):
 
     specialization = forms.CharField(max_length=100)
 
+    appointment_duration = forms.IntegerField(
+        min_value=5,
+        max_value=180,
+        initial=30,
+        label="Appointment duration (minutes)"
+    )
+
 
 
 
@@ -79,17 +86,18 @@ class TimeSlotForm(forms.ModelForm):
         if not all([doctor, date, start, end]):
             return cleaned_data
 
+        today = timezone.localdate()
+
         if start >= end:
-            today = timezone.localdate()
-
-            if date < today:
-                raise forms.ValidationError(
-                    "You cannot create a time slot in the past."
-                )
-
             raise forms.ValidationError(
                 "Start time must be before end time."
             )
+
+        if date < today:
+            raise forms.ValidationError(
+                "You cannot create a time slot in the past."
+            )
+
 
         overlapping = TimeSlot.objects.filter(
             doctor=doctor,
@@ -132,12 +140,7 @@ class TimeSlotGenerationForm(forms.Form):
         widget=forms.TimeInput(attrs={"type": "time"})
     )
 
-    duration = forms.IntegerField(
-        min_value=5,
-        max_value=180,
-        initial=30
-    )
-
+    
     break_start = forms.TimeField(
         required=False,
         widget=forms.TimeInput(attrs={"type": "time"})
@@ -186,3 +189,14 @@ class TimeSlotGenerationForm(forms.Form):
                 )
 
         return cleaned_data
+
+
+
+
+class AppointmentBookingForm(forms.Form):
+
+    date = forms.DateField(
+        widget=forms.DateInput(
+            attrs={"type": "date"}
+        )
+    )
