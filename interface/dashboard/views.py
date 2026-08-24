@@ -158,6 +158,7 @@ def doctor_update(request, pk):
                 "last_name": doctor.user.last_name,
                 "email": doctor.user.email,
                 "specialization": doctor.specialization,
+                "appointment_duration": doctor.appointment_duration,
             }
         )
 
@@ -353,7 +354,7 @@ def generate_slots(request):
             date = form.cleaned_data["date"]
             work_start = form.cleaned_data["work_start"]
             work_end = form.cleaned_data["work_end"]
-            duration = form.cleaned_data["duration"]
+            duration = doctor.appointment_duration
             break_start = form.cleaned_data["break_start"]
             break_end = form.cleaned_data["break_end"]
 
