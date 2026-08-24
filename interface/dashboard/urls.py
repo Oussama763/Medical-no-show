@@ -16,4 +16,6 @@ urlpatterns = [
     path("admin/slots/generate/", views.generate_slots, name="generate_slots"),
     path("admin/slots/<int:pk>/edit/", views.slot_update, name="slot_update"),
     path("admin/slots/<int:pk>/delete/", views.slot_delete, name="slot_delete"),
+    path("patient/book/", views.book_appointment, name="book_appointment"),
+    path("patient/appointments", views.patient_appointments, name="patient_appointments"),
 ]
