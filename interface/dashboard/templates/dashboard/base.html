@@ -60,13 +60,12 @@
                     {{ request.user.first_name }}
                     {{ request.user.last_name }}
 
-                    <a
-                        href="{% url 'logout' %}"
-                        class="btn btn-outline-danger btn-sm ms-3">
-
-                        Logout
-
-                    </a>
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm ms-3">
+                            Logout
+                        </button>
+                    </form>
 
                 </div>
 

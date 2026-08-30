@@ -8,71 +8,35 @@ Administrator Dashboard
 Administrator Dashboard
 {% endblock %}
 
-{% block sidebar %}
-
-<a href="#">
-    <i class="bi bi-speedometer2"></i>
-    Dashboard
-</a>
-
-<a href="#">
-    <i class="bi bi-person-badge"></i>
-    Doctors
-</a>
-
-<a href="#">
-    <i class="bi bi-people"></i>
-    Patients
-</a>
-
-<a href="#">
-    <i class="bi bi-calendar-check"></i>
-    Appointments
-</a>
-
-<a href="#">
-    <i class="bi bi-clock-history"></i>
-    Time Slots
-</a>
-
-{% endblock %}
-
 {% block content %}
 
-<div class="row">
-
-    <div class="col-md-3">
-
-        <div class="card shadow">
-
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
-
                 <h5>Doctors</h5>
-
-                <h2>12</h2>
-
+                <a href="{% url 'dashboard:doctor_list' %}" class="btn btn-primary mt-2">Manage doctors</a>
             </div>
-
         </div>
-
     </div>
 
-    <div class="col-md-3">
-
-        <div class="card shadow">
-
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
-
-                <h5>Patients</h5>
-
-                <h2>203</h2>
-
+                <h5>Time slots</h5>
+                <a href="{% url 'dashboard:slot_list' %}" class="btn btn-primary mt-2">Review slots</a>
             </div>
-
         </div>
-
     </div>
 
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5>Generate availability</h5>
+                <a href="{% url 'dashboard:generate_slots' %}" class="btn btn-primary mt-2">Generate slots</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
