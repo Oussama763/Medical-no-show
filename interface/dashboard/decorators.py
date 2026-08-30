@@ -22,4 +22,3 @@ def admin_required(view_func):
 
     return wrapper 
 
-# this shouldn't show up in the main branch

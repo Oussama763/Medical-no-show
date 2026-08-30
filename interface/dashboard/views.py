@@ -1,16 +1,37 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from appointments.models import Doctor
-from .forms import (DoctorCreationForm, DoctorUpdateForm)
-from django.shortcuts import get_object_or_404
+from functools import wraps
+from datetime import date, datetime, timedelta
+import calendar
+
 from django.contrib import messages
-from .decorators import admin_required
-from appointments.models import TimeSlot
-from .forms import TimeSlotForm
-from datetime import datetime, timedelta
-from .forms import TimeSlotGenerationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from django.shortcuts import get_object_or_404, redirect, render
+
+from appointments.models import Appointment, Doctor, Patient, TimeSlot
+from .decorators import admin_required
+from .forms import (
+    DoctorCreationForm,
+    DoctorUpdateForm,
+    TimeSlotForm,
+    TimeSlotGenerationForm,
+)
+
+def patient_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+        patient = getattr(request.user, "patient", None)
+        if patient is None:
+            messages.error(request, "You need a patient account to access the booking area.")
+            return redirect("dashboard:redirect")
+
+        return view_func(request, patient, *args, **kwargs)
+
+    return wrapper
 
 
 @login_required
@@ -42,19 +63,80 @@ def admin_dashboard(request):
 @login_required
 def doctor_dashboard(request):
 
+    doctor = getattr(request.user, "doctor", None)
+    slots = []
+
+    if doctor is not None:
+        slots = (
+            TimeSlot.objects.filter(doctor=doctor)
+            .select_related("doctor__user")
+            .order_by("date", "start_time")
+        )
+
     return render(
         request,
         "dashboard/doctor/dashboard.html",
+        {"doctor": doctor, "slots": slots},
     )
 
 
 @login_required
-def patient_dashboard(request):
+@patient_required
+def patient_dashboard(request, patient):
+    today = date.today()
+    upcoming = (
+        Appointment.objects.filter(patient=patient, slot__date__gte=today)
+        .select_related("slot__doctor__user")
+        .order_by("slot__date", "slot__start_time")
+    )
+    recent = (
+        Appointment.objects.filter(patient=patient)
+        .select_related("slot__doctor__user")
+        .order_by("-slot__date", "-slot__start_time")[:5]
+    )
 
     return render(
         request,
         "dashboard/patient/dashboard.html",
+        {
+            "patient": patient,
+            "upcoming": upcoming,
+            "recent": recent,
+            "total_appointments": Appointment.objects.filter(patient=patient).count(),
+            "upcoming_count": upcoming.count(),
+            "missed_count": Appointment.objects.filter(patient=patient, status=Appointment.NO_SHOW).count(),
+        },
     )
+
+
+@login_required
+@patient_required
+def patient_appointments(request, patient):
+    appointments = (
+        Appointment.objects.filter(patient=patient)
+        .select_related("slot__doctor__user")
+        .order_by("slot__date", "slot__start_time")
+    )
+
+    return render(
+        request,
+        "dashboard/patient/appointments.html",
+        {"appointments": appointments},
+    )
+
+
+@login_required
+@patient_required
+def update_appointment_status(request, patient, pk):
+    appointment = get_object_or_404(Appointment, pk=pk, patient=patient)
+
+    if request.method == "POST":
+        outcome = request.POST.get("outcome", "")
+        appointment.record_attendance(outcome)
+        messages.success(request, f"Appointment status updated to {appointment.get_status_display()}.")
+        return redirect("dashboard:patient_appointments")
+
+    return redirect("dashboard:patient_appointments")
 
 
 @admin_required
@@ -416,4 +498,116 @@ def generate_slots(request):
         {
             "form": form,
         },
+    )
+
+
+
+
+@login_required
+@patient_required
+def booking_calendar(request, patient):
+    today = date.today()
+    year = int(request.GET.get("year", today.year))
+    month = int(request.GET.get("month", today.month))
+
+    if month == 1:
+        previous_month = 12
+        previous_year = year - 1
+    else:
+        previous_month = month - 1
+        previous_year = year
+
+    if month == 12:
+        next_month = 1
+        next_year = year + 1
+    else:
+        next_month = month + 1
+        next_year = year
+
+    month_calendar = calendar.monthcalendar(year, month)
+    calendar_data = []
+
+    for week in month_calendar:
+        week_data = []
+
+        for day in week:
+            if day == 0:
+                week_data.append(None)
+                continue
+
+            current_date = date(year, month, day)
+            available = TimeSlot.objects.filter(date=current_date, is_available=True).count()
+            is_past = current_date < today
+
+            if is_past:
+                color = "secondary"
+            elif available == 0:
+                color = "danger"
+            elif available <= 3:
+                color = "warning"
+            else:
+                color = "success"
+
+            week_data.append({
+                "day": day,
+                "date": current_date,
+                "available": available,
+                "color": color,
+                "is_past": is_past,
+            })
+
+        calendar_data.append(week_data)
+
+    return render(
+        request,
+        "dashboard/patient/calendar.html",
+        {
+            "calendar": calendar_data,
+            "month": calendar.month_name[month],
+            "year": year,
+            "previous_month": previous_month,
+            "previous_year": previous_year,
+            "next_month": next_month,
+            "next_year": next_year,
+        },
+    )
+
+
+@login_required
+@patient_required
+def book_appointment(request, patient, selected_date):
+    try:
+        target_date = date.fromisoformat(selected_date)
+    except ValueError:
+        messages.error(request, "The date is invalid.")
+        return redirect("dashboard:booking_calendar")
+
+    slots = (
+        TimeSlot.objects.filter(date=target_date, is_available=True)
+        .select_related("doctor__user")
+        .order_by("start_time")
+    )
+
+    if request.method == "POST":
+        slot_id = request.POST.get("slot")
+        slot = get_object_or_404(TimeSlot, pk=slot_id, date=target_date, is_available=True)
+
+        try:
+            if Appointment.objects.filter(slot=slot).exists():
+                messages.error(request, "This slot has already been booked.")
+                return redirect("dashboard:booking_calendar")
+
+            Appointment.objects.create(patient=patient, slot=slot)
+            slot.is_available = False
+            slot.save(update_fields=["is_available"])
+            messages.success(request, f"Appointment booked for {slot.doctor} on {slot.date} at {slot.start_time}.")
+            return redirect("dashboard:patient_appointments")
+        except IntegrityError:
+            messages.error(request, "This slot is no longer available.")
+            return redirect("dashboard:booking_calendar")
+
+    return render(
+        request,
+        "dashboard/patient/book_appointment.html",
+        {"selected_date": target_date, "slots": slots},
     )

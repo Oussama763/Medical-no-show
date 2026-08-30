@@ -7,3 +7,7 @@ interface/accounts/__pycache__
 interface/accounts/migrations/__pycache__
 interface/dashboard/__pycache__
 interface/dashboard/migrations/__pycache__
+.agents
+skills-lock.json
+interface/accounts/tests/__pycache__/
+interface/appointments/tests/__pycache__/
