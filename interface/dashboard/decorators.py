@@ -20,4 +20,6 @@ def admin_required(view_func):
 
         return view_func(request, *args, **kwargs)
 
-    return wrapper
+    return wrapper 
+
+# this shouldn't show up in the main branch
