@@ -60,6 +60,17 @@ class Patient(models.Model):
     def __str__(self):
         return self.user.username
 
+    # Additional clinical flags to record patient conditions
+    diabetes = models.BooleanField(default=False)
+    hypertension = models.BooleanField(default=False)
+    handicapped = models.BooleanField(default=False)
+
+    # Email verification fields: store a 6-digit code and verification state
+    email_verified = models.BooleanField(default=False)
+    email_verification_code = models.CharField(max_length=6, null=True, blank=True)
+
+
+
 
 
 class TimeSlot(models.Model):

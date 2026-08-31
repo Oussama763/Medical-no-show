@@ -21,6 +21,11 @@ class PatientRegistrationForm(UserCreationForm):
 
     phone = forms.CharField(max_length=20)
 
+    # Clinical flags
+    diabetes = forms.BooleanField(required=False, initial=False, label="Do you have diabetes?")
+    hypertension = forms.BooleanField(required=False, initial=False, label="Do you have hypertension?")
+    handicapped = forms.BooleanField(required=False, initial=False, label="Are you handicapped?")
+
     class Meta:
         model = User
 
@@ -34,6 +39,9 @@ class PatientRegistrationForm(UserCreationForm):
             "birth_date",
             "gender",
             "phone",
+            "diabetes",
+            "hypertension",
+            "handicapped",
         )
 
     def save(self, commit=True):
@@ -52,6 +60,9 @@ class PatientRegistrationForm(UserCreationForm):
                 birth_date=self.cleaned_data["birth_date"],
                 gender=self.cleaned_data["gender"],
                 phone=self.cleaned_data["phone"],
+                diabetes=self.cleaned_data.get("diabetes", False),
+                hypertension=self.cleaned_data.get("hypertension", False),
+                handicapped=self.cleaned_data.get("handicapped", False),
             )
 
         return user
