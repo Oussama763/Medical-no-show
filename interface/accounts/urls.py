@@ -15,5 +15,7 @@ urlpatterns = [
         name="logout",
     ),
     path("register/", views.register, name="register"),
+    path("verify/<str:username>/", views.verify_email, name="verify_email"),
+    path("verify/<str:username>/resend/", views.resend_code, name="resend_code"),
     path("dashboard/", views.dashboard, name="dashboard"),
 ]
