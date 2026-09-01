@@ -1,0 +1,39 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Patients{% endblock %}
+
+{% block content %}
+<h3>Patients</h3>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Latest predicted no-show</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p, appt in patients_with_latest %}
+            <tr>
+                <td>{{ p.user.username }}</td>
+                <td>{{ p.user.get_full_name }}</td>
+                <td>{{ p.phone }}</td>
+                <td>
+                    {% if appt and appt.predicted_no_show %}
+                        {{ appt.predicted_no_show|floatformat:2 }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:doctor_patient_detail' p.pk %}">View</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">No patients yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

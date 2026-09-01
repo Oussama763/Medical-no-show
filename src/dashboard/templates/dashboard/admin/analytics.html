@@ -1,0 +1,118 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Analytics{% endblock %}
+
+{% block content %}
+<h3>Daily No-Show Rate (last 30 days)</h3>
+<table class="table table-sm">
+    <thead>
+        <tr><th>Date</th><th>Total</th><th>No-Shows</th><th>% No-Show</th></tr>
+    </thead>
+    <tbody>
+        {% for s in stats %}
+            <tr>
+                <td>{{ s.date }}</td>
+                <td>{{ s.total }}</td>
+                <td>{{ s.no_shows }}</td>
+                <td>{{ s.pct|floatformat:2 }}%</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">No data</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Model Training History</h3>
+<table class="table table-sm">
+    <thead>
+        <tr><th>Run at</th><th>Model</th><th>Accuracy</th><th>Data until</th></tr>
+    </thead>
+    <tbody>
+        {% for h in history %}
+            <tr>
+                <td>{{ h.run_at }}</td>
+                <td>{{ h.model_name }}</td>
+                <td>{{ h.accuracy|floatformat:3 }}</td>
+                <td>{{ h.data_until }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">No training history yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+ 
+<h3>Visualizations</h3>
+<div class="row">
+    <div class="col-md-8">
+        <canvas id="noShowChart" height="120"></canvas>
+    </div>
+    <div class="col-md-4">
+        <canvas id="accuracyChart" height="120"></canvas>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Build arrays from template data
+    const dates = [
+        {% for s in stats %}
+            "{{ s.date }}",
+        {% endfor %}
+    ];
+    const noShowPercent = [
+        {% for s in stats %}
+            {{ s.pct }},
+        {% endfor %}
+    ];
+
+    const runAt = [
+        {% for h in history %}
+            "{{ h.run_at|date:'Y-m-d H:i' }}",
+        {% endfor %}
+    ];
+    const accuracies = [
+        {% for h in history %}
+            {{ h.accuracy|default:0 }},
+        {% endfor %}
+    ];
+
+    // No-show chart
+    const ctx = document.getElementById('noShowChart');
+    if(ctx){
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Daily % No-Show',
+                    data: noShowPercent,
+                    borderColor: 'rgba(220,53,69,0.9)',
+                    backgroundColor: 'rgba(220,53,69,0.2)',
+                    tension: 0.2,
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, max: 100 } }
+            }
+        });
+    }
+
+    // Accuracy chart
+    const ctx2 = document.getElementById('accuracyChart');
+    if(ctx2){
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: runAt,
+                datasets: [{
+                    label: 'Model accuracy',
+                    data: accuracies,
+                    backgroundColor: 'rgba(54,162,235,0.7)'
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, max: 1 } } }
+        });
+    }
+</script>
+{% endblock %}

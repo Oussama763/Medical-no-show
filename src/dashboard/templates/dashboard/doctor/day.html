@@ -1,0 +1,59 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Doctor - {{ date }}
+{% endblock %}
+
+{% block page_title %}
+Doctor - {{ date }}
+{% endblock %}
+
+{% block content %}
+
+        <div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Time slots for {{ date }}</h5>
+    </div>
+    <div class="card-body">
+        {% if slot_info %}
+            <div class="list-group list-group-flush">
+                {% for item in slot_info %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ item.slot.start_time }} - {{ item.slot.end_time }}</strong><br>
+                            {% if item.appointment %}
+                                <small>Patient: <a href="{% url 'dashboard:doctor_patient_detail' pk=item.appointment.patient.pk %}">{{ item.appointment.patient.user.get_full_name }}</a> ({{ item.appointment.patient.user.username }})</small>
+                            {% else %}
+                                <small class="text-muted">No booking</small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if item.appointment %}
+                                <div class="d-flex gap-2">
+                                    <form method="post" action="{% url 'dashboard:update_appointment_status' pk=item.appointment.pk %}">
+                                        {% csrf_token %}
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="submit" name="outcome" value="SHOWED_UP" class="btn btn-outline-success">Showed up</button>
+                                            <button type="submit" name="outcome" value="NO_SHOW" class="btn btn-outline-danger">Missed</button>
+                                        </div>
+                                    </form>
+
+                                    <form method="post" action="{% url 'dashboard:predict_appointment' pk=item.appointment.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Predict no-show</button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <span class="badge bg-success">Available</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No slots for this day.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
