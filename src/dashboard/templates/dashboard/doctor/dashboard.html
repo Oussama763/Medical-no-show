@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Doctor Dashboard
+{% endblock %}
+
+{% block page_title %}
+Doctor Dashboard
+{% endblock %}
+
+{% block content %}
+
+    <div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Work days</h5>
+    </div>
+    <div class="card-body">
+        {% if dates %}
+            <div class="list-group list-group-flush">
+                {% for d in dates %}
+                    <a href="{% url 'dashboard:doctor_day' date=d %}" class="list-group-item list-group-item-action">
+                        {{ d }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">You have no scheduled days.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

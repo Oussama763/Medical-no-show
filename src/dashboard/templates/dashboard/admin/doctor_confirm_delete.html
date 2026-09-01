@@ -1,0 +1,73 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Delete Doctor
+{% endblock %}
+
+{% block page_title %}
+Delete Doctor
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <h3 class="text-danger">
+
+            Delete Doctor
+
+        </h3>
+
+        <hr>
+
+        <p>
+
+            Are you sure you want to delete
+
+            <strong>
+
+                Dr.
+                {{ doctor.user.first_name }}
+                {{ doctor.user.last_name }}
+
+            </strong>
+
+            ?
+
+        </p>
+
+        <p class="text-muted">
+
+            This action cannot be undone.
+
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-danger">
+
+                Delete
+
+            </button>
+
+            <a
+                href="{% url 'dashboard:doctor_list' %}"
+                class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

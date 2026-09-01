@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+Patient Detail
+{% endblock %}
+
+{% block page_title %}
+Patient Detail
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Patient information</h5>
+    </div>
+    <div class="card-body">
+        <h4>{{ patient.user.get_full_name }} <small class="text-muted">({{ patient.user.username }})</small></h4>
+        <dl class="row mt-3">
+            <dt class="col-sm-3">Diabetes</dt>
+            <dd class="col-sm-9">{% if patient.diabetes %}Yes{% else %}No{% endif %}</dd>
+
+            <dt class="col-sm-3">Hypertension</dt>
+            <dd class="col-sm-9">{% if patient.hypertension %}Yes{% else %}No{% endif %}</dd>
+
+            <dt class="col-sm-3">Handicapped</dt>
+            <dd class="col-sm-9">{% if patient.handicapped %}Yes{% else %}No{% endif %}</dd>
+        </dl>
+    </div>
+</div>
+
+{% endblock %}
