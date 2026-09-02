@@ -14,3 +14,4 @@ src/appointments/tests/__pycache__/
 src/no_show_ML/__pycache__/
 src/appointments/__pycache__/
 src/appointments/management/commands/__pycache__/
+.pytest_cache
