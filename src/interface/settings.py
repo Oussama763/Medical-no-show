@@ -76,30 +76,30 @@ WSGI_APPLICATION = 'interface.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
+"""POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
 POSTGRES_NAME = os.getenv("POSTGRES_NAME", "medical_no_show")
 POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
+POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")"""
 
-if os.getenv("USE_SQLITE", "true").lower() == "true":
+"""if os.getenv("USE_SQLITE", "true").lower() == "true":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": POSTGRES_NAME,
-            "USER": POSTGRES_USER,
-            "PASSWORD": POSTGRES_PASSWORD,
-            "HOST": POSTGRES_HOST,
-            "PORT": POSTGRES_PORT,
-        }
+else:"""
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "medical_no_show",
+        "USER": "postgres",
+        "PASSWORD": "THEouzart",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
+}
 
 
 # Password validation
