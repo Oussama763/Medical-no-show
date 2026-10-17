@@ -1,6 +1,7 @@
 import random
 from datetime import date, datetime, time, timedelta
 
+from dateutil import parser
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -12,6 +13,19 @@ class Command(BaseCommand):
     help = "Generate synthetic doctors, patients and time slots."
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            "--until",
+            type=date.fromisoformat,
+            default=None,
+            help="Generate time slots through this date (YYYY-MM-DD), inclusive.",
+        )
+
+        parser.add_argument(
+            "--slots-only",
+            action="store_true",
+            help="Generate slots for existing doctors without creating doctors or patients.",
+        )
+        
         parser.add_argument(
             "--doctors",
             type=int,
@@ -138,36 +152,46 @@ class Command(BaseCommand):
         # DOCTORS
         # ---------------------------------------------------------
 
-        doctors = []
+        slots_only = options["slots_only"]
 
-        for i in range(number_of_doctors):
+        if slots_only:
+            # Reuse doctors already stored in the database.
+            doctors = list(Doctor.objects.all())
 
-            first_name = random.choice(first_names_male + first_names_female)
-            last_name = random.choice(last_names)
+            if not doctors:
+                self.stdout.write(
+                    self.style.ERROR("No doctors found. Create doctors first.")
+                )
+                return
+        else:
+            doctors = []
 
-            username = f"doctor_{i + 1}"
+            for i in range(number_of_doctors):
+                first_name = random.choice(first_names_male + first_names_female)
+                last_name = random.choice(last_names)
+                username = f"doctor_{i + 1}"
 
-            user = User.objects.create_user(
-                username=username,
-                first_name=first_name,
-                last_name=last_name,
-                email=f"{username}@example.com",
-                password="TestPassword123!",
-            )
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=f"{username}@example.com",
+                    password="TestPassword123!",
+                )
 
-            doctor = Doctor.objects.create(
-                user=user,
-                specialization=random.choice(specializations),
-                appointment_duration=random.choice([20, 30, 30, 30, 45]),
-            )
+                doctor = Doctor.objects.create(
+                    user=user,
+                    specialization=random.choice(specializations),
+                    appointment_duration=random.choice([20, 30, 30, 30, 45]),
+                )
 
-            doctors.append(doctor)
+                doctors.append(doctor)
 
         # ---------------------------------------------------------
         # PATIENTS
         # ---------------------------------------------------------
 
-        for i in range(number_of_patients):
+        for i in range(0 if slots_only else number_of_patients):
 
             gender = random.choice(["M", "F"])
 
@@ -221,6 +245,16 @@ class Command(BaseCommand):
         # ---------------------------------------------------------
 
         today = date.today()
+        end_date = options["until"]
+
+        if end_date is not None:
+            if end_date < today:
+                self.stdout.write(
+                    self.style.ERROR("The end date cannot be in the past.")
+                )
+                return
+
+            number_of_days = (end_date - today).days + 1
 
         total_slots = 0
 
@@ -229,7 +263,6 @@ class Command(BaseCommand):
             duration = doctor.appointment_duration
 
             for day_offset in range(number_of_days):
-
                 current_date = today + timedelta(days=day_offset)
 
                 # Skip weekends
@@ -261,15 +294,17 @@ class Command(BaseCommand):
 
                     slot_end = current_time + timedelta(minutes=duration)
 
-                    TimeSlot.objects.create(
+                    _, created = TimeSlot.objects.get_or_create(
                         doctor=doctor,
                         date=current_date,
                         start_time=current_time.time(),
                         end_time=slot_end.time(),
-                        is_available=True,
+                        defaults={"is_available": True},
                     )
 
-                    total_slots += 1
+                    if created:
+                        total_slots += 1
+
                     current_time = slot_end
 
                 # Afternoon
@@ -279,15 +314,17 @@ class Command(BaseCommand):
 
                     slot_end = current_time + timedelta(minutes=duration)
 
-                    TimeSlot.objects.create(
+                    _, created = TimeSlot.objects.get_or_create(
                         doctor=doctor,
                         date=current_date,
                         start_time=current_time.time(),
                         end_time=slot_end.time(),
-                        is_available=True,
+                        defaults={"is_available": True},
                     )
 
-                    total_slots += 1
+                    if created:
+                        total_slots += 1
+
                     current_time = slot_end
 
         self.stdout.write(
